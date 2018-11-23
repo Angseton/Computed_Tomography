@@ -40,6 +40,7 @@ public:
 
     void set(uint i, uint j, double value);
     void setRow(uint i, vector_t& row);
+    void setRowInverse(uint i, vector_t& row);
     double get(uint i, uint j) const;
     vector_t getRow(uint i);
     
@@ -80,6 +81,12 @@ void Matrix::set(uint i, uint j, double value){
 void Matrix::setRow(uint i, vector_t& row){
     for (int j = 0; j < row.size(); ++j){
         values[i][j] = row[j];
+    }
+}
+
+void Matrix::setRowInverse(uint i, vector_t& row){
+    for (int j = 0; j < row.size(); ++j){
+        values[i][j] = row[row.size() - j - 1];
     }
 }
 

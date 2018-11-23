@@ -6,6 +6,14 @@
  * Test Linear Algebra operations/functions
  */
 
+void EXPECT_NEAR_VECTOR(vector_t& x, vector_t& y, double epsilon){
+    EXPECT_EQ(x.size(), y.size());
+    for (int i = 0; i < x.size(); ++i){
+        EXPECT_NEAR(x[i], y[i], epsilon);
+    }
+}
+
+
 TEST(linalg_matrix, test_matrix_creation) {
     Matrix m = Matrix(3, 4);
     EXPECT_EQ(m.shape().first, 3);
@@ -104,7 +112,7 @@ TEST(linalg_matrix, test_matrix_product) {
 
 
 TEST(linalg_matrix, test_least_squares) {
-    // y = x + 2
+    // y = x + 1
     Matrix A = Matrix(2, 2);
     vector_t v1 = vector_t({1, 1});
     vector_t v2 = vector_t({2, 1});
@@ -112,8 +120,23 @@ TEST(linalg_matrix, test_least_squares) {
     A.setRow(1, v2);
     vector_t b = {2, 3};
     vector_t out = least_squares(A, b);
-    cout << endl  << "Result" << endl;
-    for (int i = 0; i < out.size(); ++i){
-        cout << out[i] << endl;
+    vector_t res = {1, 1};
+    EXPECT_NEAR_VECTOR(out, res, 10e-4);
+}
+
+
+TEST(linalg_matrix, test_least_squares_large_matrix) {
+    // y = x + 1
+    uint N = 50 * 50;
+    uint M = 2;
+    Matrix A = Matrix(N, M);
+    vector_t b = vector_t(N, 0);
+    vector_t res = {1, 1};
+    for (int i = 0; i < N; ++i){
+        A.set(i, 0, i);
+        A.set(i, 1, 1);
+        b[i] = i + 1;
     }
+    vector_t out = least_squares(A, b);
+    EXPECT_NEAR_VECTOR(out, res, 10e-4);
 }
