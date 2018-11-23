@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 #include "../src/leastsquares.h"
+#include "../src/imageHandling.h"
 
 /* 
  * Test Linear Algebra operations/functions
@@ -139,4 +140,11 @@ TEST(linalg_matrix, test_least_squares_large_matrix) {
     }
     vector_t out = least_squares(A, b);
     EXPECT_NEAR_VECTOR(out, res, 10e-4);
+}
+
+TEST(linalg_matrix, printMatrix){
+    //Test para chequear biyectividad(?) de las funciones de imageHandling
+    Matrix m = buildMatrixFromImage("../../recursosTP3/data/phantom.png");
+    buildImageFromMatrix(m, "../../recursosTP3/data/phantomBis.png");
+    EXPECT_TRUE(true);
 }

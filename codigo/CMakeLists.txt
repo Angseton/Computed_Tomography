@@ -5,6 +5,8 @@ set(CMAKE_CXX_FLAGS -g)
 set(CMAKE_CXX_FLAGS -O2)
 set(CMAKE_CXX_STANDARD 14)
 
+find_package( OpenCV )
+include_directories( ${OpenCV_INCLUDE_DIRS} )
 
 # Leemos todos los archivos fuentes en ./src
 file(GLOB SOURCE_FILES src/ src/*.h)
@@ -15,7 +17,7 @@ file(GLOB TEST_SOURCES tests/*.cpp)
 add_subdirectory(tests/google-test)
 
 # Creamos el ejecutable para correr los tests
-add_executable(correrTests ${TEST_SOURCES} ${SOURCE_FILES})
+add_executable(correrTests ${TEST_SOURCES} ${SOURCE_FILES} src/imageHandling.h)
 
 # add_executable(tp2 src/main.cpp src/KNNClassifier.h src/PCA.h src/SentimentPredictor.h)
 
@@ -28,6 +30,9 @@ endif (APPLE)
 
 # Necesitamos asociar los archivos del framework de testing
 target_link_libraries(correrTests gtest gtest_main)
+
+#Asociamos los archivos de la biblioteca OpenCV
+target_link_libraries( correrTests ${OpenCV_LIBS} )
 
 add_test(correrTests correrTests)
 

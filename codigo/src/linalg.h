@@ -1,3 +1,6 @@
+#ifndef linalg
+#define linalg
+
 #include <algorithm>
 #include <cmath>
 #include <limits>
@@ -29,6 +32,7 @@ void print_vector(vector_t& v){
 }
 
 
+
 class Matrix{
 public:
     Matrix(uint n, uint m); // Constructor for a n x m matrix.
@@ -38,6 +42,13 @@ public:
     Matrix dot(const Matrix& other) const;
     vector_t dot(const vector_t& v);
 
+    void mostrar(std::ostream& o) const;
+    friend std::ostream& operator<<(std::ostream& os, Matrix& m) {
+        m.mostrar(os);
+        return os;
+    }
+
+
     void set(uint i, uint j, double value);
     void setRow(uint i, vector_t& row);
     void setRowInverse(uint i, vector_t& row);
@@ -45,7 +56,7 @@ public:
     vector_t getRow(uint i);
     
     void transpose();
-    pair<uint, uint> shape();
+    pair<uint, uint> shape() const;
     
     
     tuple<Matrix, vector_t, Matrix> SVD();
@@ -159,6 +170,15 @@ vector_t Matrix::dot(const vector_t& v) {
     return res;
 }
 
+void Matrix::mostrar(std::ostream &o) const {
+    o << endl;
+    for(uint i = 0; i < this->n; ++i){
+        for(uint j = 0; j < this->m; ++j){
+            o << this->get(i, j) << ", ";
+        }
+        o << endl;
+    }
+}
 
 void Matrix::transpose() {
     vector<vector_t> values_tp = vector<vector_t>(m, vector_t(n, 0));
@@ -172,7 +192,7 @@ void Matrix::transpose() {
     n = values.size();
 }
 
-pair<uint, uint> Matrix::shape(){
+pair<uint, uint> Matrix::shape() const{
     return make_pair(n, m);
 }
 
@@ -264,3 +284,5 @@ void print_matrix(Matrix& A){
     }
     std::cout << "---------" << std::endl;
 }
+
+#endif
