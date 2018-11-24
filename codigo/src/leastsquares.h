@@ -3,10 +3,11 @@
 #include <algorithm>
 #include "../src/linalg.h"
 
+using namespace std;
+
 vector_t least_squares(Matrix A, vector_t& b){
     /*
      * Least squares solver using SVD decomposition
-     *
      */
     
     uint N = A.shape().first; // A rows

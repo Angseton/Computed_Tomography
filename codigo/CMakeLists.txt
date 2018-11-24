@@ -19,7 +19,7 @@ add_subdirectory(tests/google-test)
 # Creamos el ejecutable para correr los tests
 add_executable(correrTests ${TEST_SOURCES} ${SOURCE_FILES} src/imageHandling.h)
 
-# add_executable(tp2 src/main.cpp src/KNNClassifier.h src/PCA.h src/SentimentPredictor.h)
+add_executable(tp3 src/main.cpp ${SOURCE_FILES} src/imageHandling.h)
 
 # add_executable(power_method_test src/power_method_test.cpp src/PCA.h)
 
@@ -33,6 +33,7 @@ target_link_libraries(correrTests gtest gtest_main)
 
 #Asociamos los archivos de la biblioteca OpenCV
 target_link_libraries( correrTests ${OpenCV_LIBS} )
+target_link_libraries( tp3 ${OpenCV_LIBS} )
 
 add_test(correrTests correrTests)
 
