@@ -31,8 +31,9 @@ vector_t least_squares(Matrix A, vector_t& b){
         AAt.deflate(component.second, component.first);
     }
     for (int i = 0; i < sigma.size(); ++i){
-        sigma[i] = sqrt(sigma[i]);
+        sigma[i] = sqrt(abs(sigma[i]));
     }
+
     Matrix Vt = Matrix(M, M);
     for (int i = 0; i < sigma.size(); ++i){
         vector_t v_i = (1 / (sigma[i])) * At.dot(Ut.getRow(i));
