@@ -1,3 +1,10 @@
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <string.h>
+#include <string>
+#include <stdexcept>
+
 #include <cmath>
 #include <algorithm>
 #include "linalg.h"
@@ -79,3 +86,36 @@ pair<vector_t, double> simulate_ray(Matrix& Image, uint n, uint m, point_t start
    	}
    	return make_pair(res, t);
 }
+
+
+vector<pair<point_t, point_t>> read_rays_csv_file(const string& rays_csv_file){
+	/**
+     * Parser para el csv con coordenadas de los rayos. 
+     * 
+     **/
+	vector<pair<point_t, point_t>> rays;	
+    string line;
+    ifstream infile;
+    infile.open(rays_csv_file);
+    if (infile.fail()) throw runtime_error("Ocurrió un error al abrir el archivo de coordenadas.");
+    while (getline(infile,line)) {
+        // Leo una línea y cargo una entrada
+        double start_x(stod(string(strtok(&line[0u], ","))));
+        double start_y(stod(string(strtok(NULL, ","))));
+        double end_x(stod(string(strtok(NULL, ","))));
+        double end_y(stod(string(strtok(NULL, ","))));
+ 		rays.push_back(make_pair(point_t(start_x, start_y), point_t(end_x, end_y)));
+ 		// cout << start_x << " " << start_y << " | " << end_x << " " << end_y << endl; 
+    }
+    infile.close();
+    return rays;
+
+}
+
+
+
+
+
+
+
+

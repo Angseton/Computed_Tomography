@@ -45,7 +45,14 @@ vector_t least_squares(Matrix A, vector_t& b){
     vector_t res = vector_t(M, 0);
     for (int i = 0; i < sigma.size(); ++i){
         res = res + (c[i] / sigma[i]) * Vt.getRow(i);
+        // vector_t v = Vt.getRow(i);
+        // print_vector(v);
     }
+
+    // Condition number
+    cout << endl << "Condition Number: " << (sigma[0] / sigma[sigma.size() - 1]) << endl;
+
+
     return res;
 }
 
