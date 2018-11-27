@@ -57,7 +57,8 @@ public:
     double get(uint i, uint j) const;
     vector_t getRow(uint i);
     
-    void transpose();
+    // void transpose();
+    Matrix transpose();
     pair<uint, uint> shape() const;
     
     
@@ -182,16 +183,14 @@ void Matrix::mostrar(std::ostream &o) const {
     }
 }
 
-void Matrix::transpose() {
-    vector<vector_t> values_tp = vector<vector_t>(m, vector_t(n, 0));
-    for (int i = 0; i < n; i++){
-        for (int j = 0; j < m; j++){
-            values_tp[j][i] = values[i][j];
+Matrix Matrix::transpose() {
+    Matrix res = Matrix(m, n);
+    for (int i = 0; i < n; ++i){
+        for (int j = 0; j < m; ++j){
+            res.set(j, i, values[i][j]);
         }
     }
-    values = values_tp;
-    m = n;
-    n = values.size();
+    return res;
 }
 
 pair<uint, uint> Matrix::shape() const{

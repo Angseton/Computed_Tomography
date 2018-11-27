@@ -122,25 +122,27 @@ TEST(linalg_matrix, test_least_squares) {
     vector_t b = {2, 3};
     vector_t out = least_squares(A, b);
     vector_t res = {1, 1};
-    EXPECT_NEAR_VECTOR(out, res, 10e-4);
+    EXPECT_NEAR_VECTOR(out, res, 10e-3);
 }
-
 
 TEST(linalg_matrix, test_least_squares_large_matrix) {
-    // y = x + 1
-    uint N = 50 * 50;
-    uint M = 2;
+    // y = 2 * x + 1
+    uint N = 30;
+    uint M = 3;
     Matrix A = Matrix(N, M);
     vector_t b = vector_t(N, 0);
-    vector_t res = {1, 1};
-    for (int i = 0; i < N; ++i){
+    vector_t res = {2, 4, 1};
+    for (int i = 1; i < N; ++i){
         A.set(i, 0, i);
-        A.set(i, 1, 1);
-        b[i] = i + 1;
+        A.set(i, 1, log(i));
+        A.set(i, 2, 1);
+        b[i] = 2 * i + 4 * log(i) + 1;
     }
     vector_t out = least_squares(A, b);
-    EXPECT_NEAR_VECTOR(out, res, 10e-4);
+    EXPECT_NEAR_VECTOR(out, res, 0.01);
 }
+
+
 
 TEST(linalg_matrix, printMatrix){
     //Test para chequear biyectividad(?) de las funciones de imageHandling
