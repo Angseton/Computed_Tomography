@@ -39,6 +39,7 @@ class Matrix{
 public:
     Matrix(uint n, uint m); // Constructor for a n x m matrix.
     Matrix& operator = (const Matrix& other); // Assignment operator.
+    bool operator == (const Matrix& other);
     Matrix operator + (const Matrix& other);
     Matrix operator * (const double scalar) const;
     Matrix dot(const Matrix& other) const;
@@ -60,6 +61,7 @@ public:
     // void transpose();
     Matrix transpose();
     pair<uint, uint> shape() const;
+    Matrix at_dot_a() const;
     
     
     tuple<Matrix, vector_t, Matrix> SVD();
@@ -85,6 +87,22 @@ Matrix& Matrix::operator = (const Matrix& other) {
     this->m = other.m;
     this->values = other.values;
     return *this;
+}
+
+bool Matrix::operator == (const Matrix& other){
+    bool iguales = true;
+
+    if(this->n != other.n) iguales = false;
+    if(this->m != other.m) iguales = false;
+
+    for(uint i = 0; i < this->n && iguales; ++i){
+        for(uint j = 0; j < this->m && iguales; ++j){
+            if(this->values[i][j] != other.values[i][j]){
+                iguales = false;
+            }
+        }
+    }
+    return iguales;
 }
 
 void Matrix::set(uint i, uint j, double value){
@@ -285,5 +303,23 @@ void print_matrix(Matrix& A){
     }
     std::cout << "---------" << std::endl;
 }
+
+Matrix Matrix::at_dot_a() const{
+    Matrix res(this->m, this->m);
+    for(uint i = 0; i < this-> m; ++i){
+        for(uint j = 0; j <= i; ++j){
+            for(uint k = 0; k < this->n; ++k){
+                res.values[i][j] += this->values[k][i] * this->values[k][j];
+            }
+        }
+    }
+    for(uint i = 0; i < this->m; ++i){
+        for(uint j = i + 1; j < this->m; ++j){
+            res.values[i][j] = res.values[j][i];
+        }
+    }
+    return res;
+}
+
 
 #endif

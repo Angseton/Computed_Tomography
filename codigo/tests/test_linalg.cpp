@@ -1,9 +1,10 @@
+
 #include <gtest/gtest.h>
 #include <vector>
 #include "../src/leastsquares.h"
 #include "../src/imageHandling.h"
 
-/* 
+/*
  * Test Linear Algebra operations/functions
  */
 
@@ -24,7 +25,7 @@ TEST(linalg_matrix, test_matrix_creation) {
             EXPECT_EQ(m.get(i, j), 0);
         }
     }
-} 
+}
 
 TEST(linalg_matrix, test_matrix_set_get) {
     Matrix m = Matrix(3, 4);
@@ -111,6 +112,45 @@ TEST(linalg_matrix, test_matrix_product) {
     }
 }
 
+TEST(linalg_matrix, At_dot_A){
+    Matrix m(4, 3);
+    vector_t r_0 = {1, 3, 6};
+    vector_t r_1 = {6, 1, 5};
+    vector_t r_2 = {9, 0, 2};
+    vector_t r_3 = {4, 1, 1};
+    m.setRow(0, r_0);
+    m.setRow(1, r_1);
+    m.setRow(2, r_2);
+    m.setRow(3, r_3);
+
+    Matrix res(3, 3);
+    vector_t res_0 = {134, 13, 58};
+    vector_t res_1 = {13, 11, 24};
+    vector_t res_2 = {58, 24, 66};
+    res.setRow(0, res_0);
+    res.setRow(1, res_1);
+    res.setRow(2, res_2);
+
+    Matrix AtA = m.at_dot_a();
+
+    EXPECT_TRUE(AtA == res);
+}
+
+TEST(linalg_matrix, eigen_values){
+    Matrix m(3, 3);
+    m.set(0, 0, 2);
+    m.set(1, 1, -4);
+    m.set(2, 2, 5);
+    vector_t v_i = generate_random_guess(3);
+    auto par = m.dominant_eigenvalue(v_i, ITERS_MAX, DELTA_MAX);
+    EXPECT_NEAR(par.first, 5, 10e-4);
+    m.deflate(par.second, par.first);
+    auto par_2 = m.dominant_eigenvalue(v_i, ITERS_MAX, DELTA_MAX);
+    EXPECT_NEAR(par_2.first, -4, 10e-4);
+    m.deflate(par_2.second, par_2.first);
+    auto par_3 = m.dominant_eigenvalue(v_i, ITERS_MAX, DELTA_MAX);
+    EXPECT_NEAR(par_3.first, 2, 10e-4);
+}
 
 TEST(linalg_matrix, test_least_squares) {
     // y = x + 1

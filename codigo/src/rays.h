@@ -1,3 +1,6 @@
+#ifndef RAYS
+#define RAYS
+
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -7,7 +10,7 @@
 
 #include <cmath>
 #include <algorithm>
-#include "linalg.h"
+#include "leastsquares.h"
 
 using namespace std;
 
@@ -26,8 +29,7 @@ pair<double, double> line_fit(point_t start, point_t end){
 	double m;
 	if (abs((double)end.second - (double)start.second) < TOLERANCE){
 		m = 0;
-	}
-	else{
+	} else {
 		m = ((double)end.second - (double)start.second) /  ((double)end.first - (double)start.first);	
 	}
 	double b = end.second - m * end.first;
@@ -43,12 +45,12 @@ pair<vector_t, double> simulate_ray(Matrix& Image, uint n, uint m, point_t start
 	uint rows = Image.shape().first;
 	uint cols = Image.shape().second;
 	double delta_rows = rows / n;
-	double delta_cols = cols / n;
+	double delta_cols = cols / n; // es m?
 
 	if (start.first == end.first){
 		end.first += 1;
 	}
-	if (start.second == end.second){
+	if (start.second == end.second){//hace falta?
 		end.second += 1;
 	}
 
@@ -58,10 +60,10 @@ pair<vector_t, double> simulate_ray(Matrix& Image, uint n, uint m, point_t start
 
 	// Filas en las que esta en rayo
 	uint i1 = eval_line(l, 0);
-	uint i2 = eval_line(l, cols);
+	uint i2 = eval_line(l, cols); // cols-1?
 	
-	uint i_min = max(1.0, min((double) rows-1, floor(min(i1,i2))));
-   	uint i_max = max(1.0, min((double) rows-1, ceil(max(i1,i2))));
+	uint i_min = max(1.0, min((double) rows - 1, floor(min(i1,i2))));// debería ser 0.0?
+   	uint i_max = max(1.0, min((double) rows - 1, ceil(max(i1,i2))));
    	
    	double t = 0;
    	for (auto i = i_min; i < i_max; ++i){
@@ -114,7 +116,7 @@ vector<pair<point_t, point_t>> read_rays_csv_file(const string& rays_csv_file){
 
 
 
-
+#endif
 
 
 

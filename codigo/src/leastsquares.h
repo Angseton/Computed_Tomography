@@ -1,3 +1,6 @@
+#ifndef LEAST_SQUARES
+#define LEAST_SQUARES
+
 #include <tuple>
 #include <math.h>
 #include <algorithm>
@@ -12,8 +15,8 @@ vector_t least_squares(Matrix A, vector_t& b){
     
     uint N = A.shape().first; // A rows
     uint M = A.shape().second; // A columns
-    Matrix At = A.transpose();
-    Matrix AtA = At.dot(A);
+    //Matrix At = A.transpose();
+    Matrix AtA = A.at_dot_a();
     Matrix Vt = Matrix(M, M);
     vector_t sigma;
     for (int i = 0; i < M; ++i){
@@ -37,7 +40,7 @@ vector_t least_squares(Matrix A, vector_t& b){
         vector_t v_i = (1 / sigma[i]) * A.dot(Vt.getRow(i));
         Ut.setRow(i, v_i);
     }
-    Matrix U = Ut.transpose();
+    //Matrix U = Ut.transpose();
     vector_t c = Ut.dot(b);
     vector_t res = vector_t(M, 0);
     for (int i = 0; i < sigma.size(); ++i){
@@ -47,3 +50,5 @@ vector_t least_squares(Matrix A, vector_t& b){
     // cout << endl << "Condition Number: " << (sigma[0] / sigma[sigma.size() - 1]) << endl;
     return res;
 }
+
+#endif
