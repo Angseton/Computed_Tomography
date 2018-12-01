@@ -25,6 +25,7 @@ int main(int argc, char * argv[]){
 	string f_rays_csv;
 	uint d_w; // Discretization Witdth
 	uint d_h; // Discretization Height
+	uint max_comp = 0; // Max components
 
 	if(cmdOptionExists(argv, argv+argc, "-i")){
         f_input = getCmdOption(argv, argv + argc, "-i");
@@ -41,6 +42,9 @@ int main(int argc, char * argv[]){
     if(cmdOptionExists(argv, argv+argc, "-d_h")){
         d_h = (uint) stoi(getCmdOption(argv, argv + argc, "-d_h"));
     }
+    if(cmdOptionExists(argv, argv+argc, "-max_comp")){
+        max_comp = (uint) stoi(getCmdOption(argv, argv + argc, "-max_comp"));
+    }
 
     cout <<  "Input File: " << f_input << endl;
     cout <<  "Output File: " << f_output << endl;
@@ -52,14 +56,14 @@ int main(int argc, char * argv[]){
 	Matrix phi = Matrix(rays.size(), N*M);
 	vector_t b = vector_t(rays.size(), 0);
 	for (int i = 0; i < rays.size(); ++i){
-		std::cerr << "Simulate ray: " << i << '/' << rays.size() <<"              \r";
+		// std::cerr << "Simulate ray: " << i << '/' << rays.size() <<"              \r";
 			pair<vector_t, double> sample = simulate_ray(
 				in, N, M, rays[i].first, rays[i].second
 			);
 			phi.setRow(i, sample.first);
 			b[i] = sample.second;
 	}
-	vector_t ls = least_squares(phi, b);
+	vector_t ls = least_squares(phi, b, max_comp);
 	Matrix recostruction = Matrix(N, M);
 	for (int i = 0; i < ls.size(); ++i){
 		uint row = (int)(i / M);

@@ -8,27 +8,28 @@
 
 using namespace std;
 
-vector_t least_squares(Matrix A, vector_t& b){
+vector_t least_squares(Matrix A, vector_t& b, uint max_comp){
     /*
      * Least squares solver using SVD decomposition
      */
     
     uint N = A.shape().first; // A rows
     uint M = A.shape().second; // A columns
-    //Matrix At = A.transpose();
     Matrix AtA = A.at_dot_a();
     Matrix Vt = Matrix(M, M);
     vector_t sigma;
-    for (int i = 0; i < M; ++i){
+    max_comp = max_comp > 0 ? max_comp : M;
+    for (int i = 0; i < max_comp; ++i){
         std::cerr << "Computing eigenvector: " << i << '/' << M <<"              \r";
         vector_t v_i = generate_random_guess(M);
         pair<double, vector_t> component = AtA.dominant_eigenvalue(v_i, ITERS_MAX, DELTA_MAX);
         if (component.first < TOLERANCE){
-            std::cerr << "Matrix AtA is not full rank.                         \r"; 
+            // std::cerr << "Matrix AtA is not full rank.                         \r"; 
             break;
         }
         Vt.setRow(i, component.second);
         sigma.push_back(component.first);
+        cout << endl << "Eigenvalue " << i << " : " << component.first << endl;
         AtA.deflate(component.second, component.first);
     }
     for (int i = 0; i < sigma.size(); ++i){

@@ -45,7 +45,7 @@ pair<vector_t, double> simulate_ray(Matrix& Image, uint n, uint m, point_t start
 	uint rows = Image.shape().first;
 	uint cols = Image.shape().second;
 	double delta_rows = rows / n;
-	double delta_cols = cols / n; // es m?
+	double delta_cols = cols / m;
 
 	if (start.first == end.first){
 		end.first += 1;
@@ -60,9 +60,9 @@ pair<vector_t, double> simulate_ray(Matrix& Image, uint n, uint m, point_t start
 
 	// Filas en las que esta en rayo
 	uint i1 = eval_line(l, 0);
-	uint i2 = eval_line(l, cols); // cols-1?
+	uint i2 = eval_line(l, cols - 1); // cols-1?
 	
-	uint i_min = max(1.0, min((double) rows - 1, floor(min(i1,i2))));// debería ser 0.0?
+	uint i_min = max(0.0, min((double) rows - 1, floor(min(i1,i2))));// debería ser 0.0?
    	uint i_max = max(1.0, min((double) rows - 1, ceil(max(i1,i2))));
    	
    	double t = 0;
