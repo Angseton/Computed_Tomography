@@ -14,8 +14,6 @@
 
 using namespace std;
 
-typedef pair<double, double> point_t;
-
 double fix(double x){
 	if (x < 0) return ceil(x);
 	else return floor(x);
@@ -41,52 +39,41 @@ double time_taken(double val){
 	return val + 1;
 }
 
-pair<vector_t, double> simulate_ray(Matrix& Image, uint n, uint m, point_t start, point_t end){
-	uint rows = Image.shape().first;
-	uint cols = Image.shape().second;
-	double delta_rows = rows / n;
-	double delta_cols = cols / m;
+pair<vector_t, double> simulate_ray(Matrix& Image, uint n, uint m, point_t start, point_t end, double error_sigma){
+  uint rows = Image.shape().first;
+  uint cols = Image.shape().second;
+  double delta_rows = rows / n;
+  double delta_cols = cols / m;
 
-	if (start.first == end.first){
-		end.first += 1;
-	}
-	if (start.second == end.second){//hace falta?
-		end.second += 1;
-	}
+  if (start.first == end.first){
+    end.first += 1;
+  }
+  if (start.second == end.second){//hace falta?
+    end.second += 1;
+  }
 
-	pair<double, double> l = line_fit(start, end);
-	pair<double, double> l_inv = make_pair(1 / l.first, - l.second / l.first);
-	Matrix D = Matrix(n, m);
-
-	// Filas en las que esta en rayo
-	uint i1 = eval_line(l, 0);
-	uint i2 = eval_line(l, cols - 1); // cols-1?
-	
-	uint i_min = max(0.0, min((double) rows - 1, floor(min(i1,i2))));// debería ser 0.0?
-   	uint i_max = max(1.0, min((double) rows - 1, ceil(max(i1,i2))));
-   	
-   	double t = 0;
-   	for (auto i = i_min; i < i_max; ++i){
-   		double j1 = eval_line(l_inv, i);
-        double j2 = eval_line(l_inv, i + 1);
-
-        uint j_min = max(0.0, (double) min((double) cols, (double) floor(min(j1, j2))));
-        uint j_max = max(0.0, (double) min((double) cols, (double) ceil(max(j1, j2))));
-
-        for (int j = j_min; j < j_max; ++j){
-        	t += time_taken(Image.get(i,j));
-            uint n_i = (uint) floor(min((double) n-1, (double) fix(i/delta_rows)));
-            uint m_j = (uint) floor(min((double) m-1, (double) fix(j/delta_cols)));
-            D.set(n_i, m_j, D.get(n_i, m_j) + 1);
-        }
-   	}
-   	vector_t res(n * m);
-   	for (int i = 0; i < D.shape().first; ++i){
-   		for (int j = 0; j < D.shape().second; ++j){
-   			res[(i * n) + j] = D.get(i, j);
-   		}
-   	}
-   	return make_pair(res, t);
+  pair<double, double> l = line_fit(start, end);
+  Matrix D = Matrix(n, m);
+  double t = 0;
+  for (int i = 0; i < rows; ++i){
+    for (int j = 0; j < cols; ++j){
+      double l_left = eval_line(l, i);
+      double l_right = eval_line(l, i + 1);
+      if ( (j < l_left && l_left < j + 1) || (j < l_right && l_right < j + 1) ){
+        t += time_taken(Image.get(i,j));
+        uint n_i = (uint) floor(min((double) n-1, (double) fix(i/delta_rows)));
+        uint m_j = (uint) floor(min((double) m-1, (double) fix(j/delta_cols)));
+        D.set(n_i, m_j, D.get(n_i, m_j) + 1);
+      }
+    }
+  }
+    vector_t res(n * m);
+    for (int i = 0; i < D.shape().first; ++i){
+      for (int j = 0; j < D.shape().second; ++j){
+        res[(i * n) + j] = D.get(i, j);
+      }
+    }
+  return make_pair(res, t);
 }
 
 
@@ -107,7 +94,6 @@ vector<pair<point_t, point_t>> read_rays_csv_file(const string& rays_csv_file){
         double end_x(stod(string(strtok(NULL, ","))));
         double end_y(stod(string(strtok(NULL, ","))));
  		rays.push_back(make_pair(point_t(start_x, start_y), point_t(end_x, end_y)));
- 		// cout << start_x << " " << start_y << " | " << end_x << " " << end_y << endl; 
     }
     infile.close();
     return rays;
@@ -115,6 +101,26 @@ vector<pair<point_t, point_t>> read_rays_csv_file(const string& rays_csv_file){
 }
 
 
+vector<pair<point_t, point_t>> generate_random_rays(Matrix& im, uint sample_size){
+	uint height = im.shape().first;
+	uint width = im.shape().second;
+	vector<pair<point_t, point_t>> rays;
+	std::bernoulli_distribution bernoulli(0.5);
+	std::uniform_int_distribution<int> choose_x(0, width);
+	std::uniform_int_distribution<int> choose_y(0, height);
+	for (int i = 0; i < sample_size; ++i){
+		bool start_horizontal = (bool) bernoulli(generator);
+		bool end_horizontal = (bool) bernoulli(generator);
+        // Chose starting point coordinates
+        double start_x = start_horizontal? 0 : choose_x(generator);
+        double start_y = start_horizontal? choose_y(generator) : 0;
+        // Chose end point coordinates
+        double end_x = end_horizontal ? width : choose_x(generator);
+        double end_y = end_horizontal ? choose_y(generator) : height;
+        rays.push_back(make_pair(point_t(start_x, start_y), point_t(end_x, end_y)));
+	}
+	return rays;
+}
 
 #endif
 
