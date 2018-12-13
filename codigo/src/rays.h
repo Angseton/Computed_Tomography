@@ -39,6 +39,28 @@ double time_taken(double val){
 	return val + 1;
 }
 
+bool passes_through(pair<double, double> l, pair<double, double> x_range, pair<double, double> y_range){
+  double l_left = eval_line(l, x_range.first);
+  double l_right = eval_line(l, x_range.second);
+  if (y_range.first <= l_left && l_left <= y_range.second){
+    return true;
+  }
+  else if (y_range.first <= l_right && l_right <= y_range.second){
+    return true;
+  }
+  else if(l_left <= y_range.first && y_range.second <= l_right){
+    return true;
+  }
+  else if(y_range.first <= l_left && l_right <= y_range.second){
+    return true;
+  }
+  else{
+    return false;
+  }
+
+}
+
+
 pair<vector_t, double> simulate_ray(Matrix& Image, uint n, uint m, point_t start, point_t end, double error_sigma){
   uint rows = Image.shape().first;
   uint cols = Image.shape().second;
@@ -48,7 +70,7 @@ pair<vector_t, double> simulate_ray(Matrix& Image, uint n, uint m, point_t start
   if (start.first == end.first){
     end.first += 1;
   }
-  if (start.second == end.second){//hace falta?
+  if (start.second == end.second){
     end.second += 1;
   }
 
@@ -57,9 +79,7 @@ pair<vector_t, double> simulate_ray(Matrix& Image, uint n, uint m, point_t start
   double t = 0;
   for (int i = 0; i < rows; ++i){
     for (int j = 0; j < cols; ++j){
-      double l_left = eval_line(l, i);
-      double l_right = eval_line(l, i + 1);
-      if ( (j < l_left && l_left < j + 1) || (j < l_right && l_right < j + 1) ){
+      if (passes_through(l, make_pair(i, i + 1), make_pair(j, j + 1))){
         t += time_taken(Image.get(i,j));
         uint n_i = (uint) floor(min((double) n-1, (double) fix(i/delta_rows)));
         uint m_j = (uint) floor(min((double) m-1, (double) fix(j/delta_cols)));
