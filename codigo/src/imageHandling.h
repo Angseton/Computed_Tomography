@@ -33,7 +33,14 @@ void buildImageFromMatrix(const Matrix& m, string outputFileName){
     Mat image(rows, cols, CV_8UC1);
     for(uint i = 0; i < rows; ++i){
         for(uint j = 0; j < cols; ++j){
-            image.at<uchar>(i, j) = (uchar)m.get(i, j);
+        	double currentPixel = m.get(i, j);
+        	if(currentPixel < 0){
+        		image.at<uchar>(i, j) = 0;
+        	} else if (currentPixel > 255){
+        		image.at<uchar>(i, j) = 255;
+        	} else {
+            	image.at<uchar>(i, j) = (uchar)m.get(i, j);	
+        	}
         }
     }
     imwrite(outputFileName, image);
