@@ -160,7 +160,7 @@ TEST(linalg_matrix, test_least_squares) {
     A.setRow(0, v1);
     A.setRow(1, v2);
     vector_t b = {2, 3};
-    vector_t out = least_squares(A, b, 0);
+    vector_t out = least_squares(A, b, 0, false);
     vector_t res = {1, 1};
     EXPECT_NEAR_VECTOR(out, res, 10e-3);
 }
@@ -178,7 +178,7 @@ TEST(linalg_matrix, test_least_squares_large_matrix) {
         A.set(i, 2, 1);
         b[i] = 2 * i + 4 * log(i) + 1;
     }
-    vector_t out = least_squares(A, b, 0);
+    vector_t out = least_squares(A, b, 0, false);
     EXPECT_NEAR_VECTOR(out, res, 0.01);
 }
 

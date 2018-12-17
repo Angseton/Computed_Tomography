@@ -14,6 +14,7 @@ using namespace std;
 // Some type definitions
 typedef unsigned int uint;
 typedef vector<double> vector_t;
+typedef pair<double, double> point_t;
 // Random number generation
 std::default_random_engine generator;
 std::normal_distribution<double> distribution(0, 1);

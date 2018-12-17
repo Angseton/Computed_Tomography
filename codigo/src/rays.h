@@ -10,7 +10,7 @@
 
 #include <cmath>
 #include <algorithm>
-#include "leastsquares.h"
+#include "../src/leastsquares.h"
 
 using namespace std;
 
@@ -93,6 +93,9 @@ pair<vector_t, double> simulate_ray(Matrix& Image, uint n, uint m, point_t start
         res[(i * n) + j] = D.get(i, j);
       }
     }
+
+  uniform_real_distribution<double> error_distribution(0, t * error_sigma);
+  t += error_distribution(generator);
   return make_pair(res, t);
 }
 
