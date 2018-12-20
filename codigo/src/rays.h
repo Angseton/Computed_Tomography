@@ -64,8 +64,8 @@ bool passes_through(pair<double, double> l, pair<double, double> x_range, pair<d
 pair<vector_t, double> simulate_ray(Matrix& Image, uint n, uint m, point_t start, point_t end, double error_sigma){
   uint rows = Image.shape().first;
   uint cols = Image.shape().second;
-  double delta_rows = rows / n;
-  double delta_cols = cols / m;
+  double delta_rows = (double)rows / n;
+  double delta_cols = (double)cols / m;
 
   if (start.first == end.first){
     end.first += 1;
